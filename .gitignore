@@ -1,0 +1,1 @@
+/build/\n/target/\n.project\n.classpath\n.settings/\n.idea/\n*.iml\n.mvn/\nmvnw\nmvnw.cmd\n*.log\n*.class\n*.jar\n*.war\n*.ear\n.DS_Store\nThumbs.db
