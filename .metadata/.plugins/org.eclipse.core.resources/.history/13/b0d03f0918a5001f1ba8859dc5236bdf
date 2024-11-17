@@ -1,0 +1,106 @@
+package web;
+
+import java.io.IOException;
+import java.util.List;
+
+import jakarta.ejb.EJB;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import metier.ICategorieLocal;
+import metier.IProduitLocal;
+import metier.entities.Categorie;
+import metier.entities.Produit;
+
+@WebServlet(name = "produitCategorieServlet", urlPatterns = "*.do")
+public class ProduitServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @EJB
+    private IProduitLocal produitService;
+
+    @EJB
+    private ICategorieLocal categorieService;
+
+    public ProduitServlet() {
+        super();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+
+        // Fetch produits and categories and set in session
+        List<Produit> produits = produitService.listProduits();
+        List<Categorie> categories = categorieService.listCategories();
+        session.setAttribute("produits", produits);
+        session.setAttribute("categories", categories);
+
+        // Determine view based on "view" parameter and redirect accordingly
+        String view = req.getParameter("view");
+        if ("categorie".equals(view)) {
+            resp.sendRedirect("Categorie.jsp");
+        } else {
+            resp.sendRedirect("Produit.jsp");
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+
+        switch (action) {
+            case "NewProduit":
+                createNewProduit(req);
+                break;
+            case "AddQuantity":
+                updateProduitQuantity(req, true);
+                break;
+            case "RemoveQuantity":
+                updateProduitQuantity(req, false);
+                break;
+            case "NewCategorie":
+                createNewCategorie(req);
+                break;
+        }
+
+        // Update produits and categories list and forward to Produit.jsp
+        req.setAttribute("produits", produitService.listProduits());
+        req.setAttribute("categories", categorieService.listCategories());
+        req.getRequestDispatcher("Produit.jsp").forward(req, resp);
+    }
+
+    private void createNewProduit(HttpServletRequest req) {
+        String name = req.getParameter("name");
+        double quantity = Double.parseDouble(req.getParameter("quantity"));
+        Long categorieId = Long.parseLong(req.getParameter("categorieId"));
+
+        Categorie categorie = categorieService.getCategorie(categorieId);
+        if (categorie != null) {
+            Produit produit = new Produit(name, quantity, categorie);
+            produitService.addProduit(produit);
+        }
+    }
+
+    private void createNewCategorie(HttpServletRequest req) {
+        String name = req.getParameter("categorieName");
+        String description = req.getParameter("categorieDescription");
+
+        Categorie categorie = new Categorie(name, description);
+        categorieService.addCategorie(categorie);
+    }
+
+    private void updateProduitQuantity(HttpServletRequest req, boolean addQuantity) {
+        Long produitId = Long.parseLong(req.getParameter("produitId"));
+        double quantity = Double.parseDouble(req.getParameter("quantity"));
+
+        if (addQuantity) {
+            produitService.addQuantity(produitId, quantity);
+        } else {
+            produitService.removeQuantity(produitId, quantity);
+        }
+    }
+}

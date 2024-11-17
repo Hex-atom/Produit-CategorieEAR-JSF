@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <meta charset="UTF-8" />
+    <title>Gestion des produits</title>
+</h:head>
+<h:body>
+    <div id="formProduit">
+        <h:form>
+            <table>
+                <tr>
+                    <td>Code :</td>
+                    <td><h:inputText value="#{produitBean.code}" /></td>
+                </tr>
+                <tr>
+                    <td>Designation :</td>
+                    <td><h:inputText value="#{produitBean.designation}" /></td>
+                </tr>
+                <tr>
+                    <td>Prix :</td>
+                    <td><h:inputText value="#{produitBean.prix}" /></td>
+                </tr>
+                <tr>
+                    <td>Quantite :</td>
+                    <td><h:inputText value="#{produitBean.quantite}" /></td>
+                </tr>
+                <tr>
+                    <td>Categorie :</td>
+                    <td>
+                        <h:selectOneMenu value="#{produitBean.categorie}">
+                            <f:selectItems value="#{produitBean.categories}" var="cat"
+                                           itemValue="#{cat.libelle}" itemLabel="#{cat.libelle}" />
+                        </h:selectOneMenu>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h:commandButton value="Ajouter" action="#{produitBean.ajouter}" />
+                        <h:commandButton value="Modifier" action="#{produitBean.modifier}" />
+                        <h:commandButton value="Rechercher" action="#{produitBean.rechercher}" />
+                        <h:commandButton value="+ Quantite" action="#{produitBean.increaseQuantite}" />
+                        <h:commandButton value="- Quantite" action="#{produitBean.decreaseQuantite}" />
+                    </td>
+                </tr>
+            </table>
+        </h:form>
+    </div>
+
+    <div>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Designation</th>
+                    <th>Prix</th>
+                    <th>Quantite</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ui:repeat value="#{produitBean.produits}" var="pr">
+                    <tr>
+                        <td><h:outputText value="#{pr.code}" /></td>
+                        <td><h:outputText value="#{pr.libelle}" /></td>
+                        <td><h:outputText value="#{pr.prix}" /></td>
+                        <td><h:outputText value="#{pr.quantite}" /></td>
+                        <td>
+                            <h:form style="display:inline;">
+                                <h:inputHidden value="#{pr.code}" />
+                                <h:commandButton value="Supprimer" action="#{produitBean.supprimer}" />
+                            </h:form>
+                        </td>
+                    </tr>
+                </ui:repeat>
+            </tbody>
+        </table>
+    </div>
+
+    <nav>
+        <h:link value="Go to Categorie Form" outcome="Categorie.xhtml" />
+    </nav>
+</h:body>
+</html>

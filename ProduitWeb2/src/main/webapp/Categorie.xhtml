@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <meta charset="UTF-8" />
+    <title>Gestion des Catégories</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #333333;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1e1e1e;
+        }
+
+        td {
+            background-color: #1c1c1c;
+        }
+
+        input[type="text"], textarea {
+            width: 90%;
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #444444;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        input, select, button {
+            background-color: #333333;
+            color: #ffffff;
+            border: 1px solid #444444;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        input[type="submit"], h:commandButton {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover, h:commandButton:hover {
+            background-color: #555555;
+        }
+
+        a {
+            color: #1e90ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        div {
+            margin: 20px;
+        }
+
+        nav {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        nav a {
+            font-size: 18px;
+            background-color: #333333;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: #555555;
+        }
+    </style>
+</h:head>
+<h:body>
+    <div id="formCategorie">
+        <h:form>
+            <table>
+                <tr>
+                    <td>Libelle :</td>
+                    <td><h:inputText value="#{categorieBean.categorie.libelle}" /></td>
+                </tr>
+                <tr>
+                    <td>Description :</td>
+                    <td><h:inputTextarea value="#{categorieBean.categorie.description}" rows="4" cols="50" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <h:commandButton value="Ajouter" action="#{categorieBean.addCategorie}" />
+                        <h:commandButton value="Rechercher" action="#{categorieBean.searchCategories}" />
+                    </td>
+                </tr>
+            </table>
+        </h:form>
+    </div>
+
+    <div>
+        <h:form>
+            <h:outputLabel for="searchKey" value="Rechercher une Catégorie: " />
+            <h:inputText id="searchKey" value="#{categorieBean.searchKey}" />
+            <h:commandButton value="Rechercher" action="#{categorieBean.searchCategories}" />
+        </h:form>
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Libelle</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ui:repeat value="#{categorieBean.categories}" var="ct">
+                    <tr>
+                        <td><h:outputText value="#{ct.code}" /></td>
+                        <td><h:outputText value="#{ct.libelle}" /></td>
+                        <td><h:outputText value="#{ct.description}" /></td>
+                        <td>
+                            <h:commandButton value="Supprimer" action="#{categorieBean.deleteCategorie(ct.code)}" />
+                            <h:commandButton value="Modifier" action="#{categorieBean.editCategorie(ct)}" />
+                        </td>
+                    </tr>
+                </ui:repeat>
+            </tbody>
+        </table>
+    </div>
+
+    <nav>
+        <h:link value="Go to Produit Form" outcome="Produit.xhtml" />
+    </nav>
+</h:body>
+</html>

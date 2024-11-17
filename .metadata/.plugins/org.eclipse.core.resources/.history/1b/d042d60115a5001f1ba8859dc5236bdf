@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="urn:jboss:deployment-structure:1.2">
+    <dependencies>
+        <module name="deployment.ProduitEJB.jar" />
+    </dependencies>
+</deployment>

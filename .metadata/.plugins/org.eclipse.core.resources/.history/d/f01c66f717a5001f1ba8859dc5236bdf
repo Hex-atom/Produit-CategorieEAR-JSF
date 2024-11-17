@@ -1,0 +1,118 @@
+package web;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import metier.ICategorieLocal;
+import metier.IProduitLocal;
+import metier.entities.*;
+
+@WebServlet(name = "cs", urlPatterns = "*.do")
+public class ProduitServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @EJB
+    private IProduitLocal metierProduit;
+    @EJB
+    private ICategorieLocal metierCategorie;
+
+    public ProduitServlet() {
+        super();
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        session.setAttribute("categories", metierCategorie.listCategorie());
+        session.setAttribute("produits", metierProduit.listProduits());
+        response.sendRedirect("Produit.jsp");
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        String action = request.getParameter("action");
+
+        try {
+            // Validate and parse input parameters
+            String designation = request.getParameter("designation");
+            if (designation == null || designation.isEmpty()) {
+                throw new IllegalArgumentException("Designation is required.");
+            }
+
+            String prixParam = request.getParameter("prix");
+            double prix = 0.0;
+            try {
+                prix = Double.parseDouble(prixParam);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Prix must be a valid number.");
+            }
+
+            String quantiteParam = request.getParameter("quantite");
+            int quantite = Integer.parseInt(quantiteParam);
+
+            String categorie = request.getParameter("categorie");
+            List<Categorie> cat = metierCategorie.getCategorie(categorie);
+            if (cat == null || cat.isEmpty()) {
+                throw new IllegalArgumentException("Categorie not found: " + categorie);
+            }
+
+            Produit p = new Produit(designation, quantite, prix, cat.get(0));
+
+            // Handle actions
+            switch (action) {
+                case "Ajouter":
+                    metierProduit.addProduit(p);
+                    break;
+
+                case "Modifier":
+                    Long code = Long.parseLong(request.getParameter("code"));
+                    p.setCode(code);
+                    metierProduit.editProduit(p);
+                    break;
+
+                case "Rechercher":
+                    List<Produit> produits = metierProduit.getProduit(designation);
+                    request.setAttribute("produits", produits);
+                    break;
+
+                case "+ Quantite":
+                    code = Long.parseLong(request.getParameter("code"));
+                    metierProduit.ajouterQte(code, quantite);
+                    break;
+
+                case "- Quantite":
+                    code = Long.parseLong(request.getParameter("code"));
+                    metierProduit.retirerQte(code, quantite);
+                    break;
+
+                case "Supprimer":
+                    code = Long.parseLong(request.getParameter("code"));
+                    metierProduit.deleteProduit(code);
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown action: " + action);
+            }
+
+        } catch (Exception e) {
+            // Set error message and forward to an error page
+            request.setAttribute("errorMessage", e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+            return;
+        }
+
+        // Update session attributes and redirect
+        session.setAttribute("produits", metierProduit.listProduits());
+        response.sendRedirect("Produit.jsp");
+    }
+}

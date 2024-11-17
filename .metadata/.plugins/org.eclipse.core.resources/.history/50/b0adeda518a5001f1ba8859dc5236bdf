@@ -1,0 +1,55 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div id="formCategorie">
+		<form action="Categorie.do" method="post">
+			<table>
+				<tr>
+					<td>Code :</td>
+					<td><input type="text" name="code"></td>
+				</tr>
+				<tr>
+					<td>Libelle :</td>
+					<td><input type="text" name="libelle"></td>
+				</tr>
+				<tr>
+					<td>Descriprion :</td>
+					<td><input type="text" name="descriprion"></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+					<input type="submit" name="action" value="Ajouter">
+					<input type="submit" name="action" value="Modifier">
+					<input type="submit" name="action" value="Rechergcher">
+					</td>
+				</tr>
+			</table>
+	</div>
+	<div>
+		<table border="1">
+			<tr>
+				<th>Code</th>
+				<th>Libelle</th>
+				<th>Descriprion</th>
+			</tr>
+			<tr>
+				<td>code1</td>
+				<td>lib1</td>
+				<td>desc 1</td>
+				<td><input type="submit" name="action" value="Supprimer"></td>
+			</tr>
+		</table>
+	</div>
+	</form>
+	</div>
+	<nav>
+		<a href="Produit.jsp">Go to Produit Form</a>
+	</nav>
+</body>
+</html>

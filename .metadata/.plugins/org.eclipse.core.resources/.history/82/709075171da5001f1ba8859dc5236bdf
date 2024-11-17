@@ -1,0 +1,23 @@
+package bean;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+
+/**
+ * Session Bean implementation class PersonBean
+ */
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+@LocalBean
+public class PersonBean {
+
+    /**
+     * Default constructor. 
+     */
+    public PersonBean() {
+        // TODO Auto-generated constructor stub
+    }
+
+}
